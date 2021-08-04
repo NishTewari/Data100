@@ -1,0 +1,378 @@
+---
+title: 'R Worksheet 1: An Introduction to R and the ggplot2 package'
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+The intention of this worksheet is to introduce you to some of the basics commands in R and familiarize you with the ggplot2 package that was introduced in the first two lectures.
+
+**Some very important steps**
+
+BE SURE TO SAVE YOUR WORK AS YOUR PROGRESS THROUGH THIS FILE! To do so, create a DATA100 folder on your I: drive (or on a USB, etc.) and then use "File -> Save As" above to save the file in this folder.  Make sure that this folder is easily accessible as you will be using it throughout the term in DATA100.  
+
+Once this folder is created and the file is saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your newly created DATA100 folder.  You will want to do this each time you open a DATA100 file in RStudio.
+
+**Additional Notes**
+
+i) Any of the "white" areas in this file (called an R notebook or markdown file) are where text can be input into the document.
+
+ii) Any of the "grey" areas are where R code is entered (called "code chunks").  To execute any of the code chunks, push the run button (looks like a "play" button) in the top right of the code chunk. Alternatively, "Ctrl+Shift+Enter" will also run the code chunk.
+
+iii) Code chunks will always start with '''{r} and end with '''.  If necessary, to insert a code chunk you can click on "Insert" along the tool bar and choose R or "Ctrl+Alt+I".  For the most part, code chunks will be given and you won't need to insert them in the file yourself.
+
+#PART 1 - Defining variables
+
+To assign a scalar (i.e. a number) or a vector (i.e. a list of numbers) a variable name in R simply use <- (less than symbol followed by minus symbol). In addition, vectors are defined using c(ELEMENTS_OF_VECTOR).  Putting all of this together: VARIABLE_NAME<-c(ELEMENTS_OF_VECTOR)  (or you could just put a single number instead of c(...) if its a scalar).
+
+**Example 1**
+
+Run the following code by clicking on the "play" button in the top right of the code chunk. The output will appear immediately after the chunk.  Notice that when X and Y are defined the results are only displayed by typing X or Y afterwards.
+
+```{r}
+X<-2 #Assigns X the value of 2
+X #Displays X
+Y<-c(1,2,3,4) #Assigns the vector/list of numbers (1,2,3,4) to Y
+Y #Displays Y
+```
+
+**Exercise 1**
+
+Now try it yourself.  Define P as the value -4 and Q as the vector (2,4,6,8) in the chunk below and then run the code.
+
+```{r}
+P<- -4
+P
+Q<-c(2,4,6,8)
+Q
+
+```
+
+Note: For vectors with a common increment (i.e. increase) in stepsize - for example, Q above starts at 2 and increases by 2 units at each step - the command seq(STARTING_VALUE,END_VALUE,INCREMENT_SIZE) may be useful.  For Q it wouldn't be necessary to use but below you will find examples where it is indeed necessary.
+
+**Exercise 2**
+
+a) Define R as the vector from -99 to 99 by increments of 2.
+
+b) Define S as the vector from 200 to 57.5 where consecutive numbers have a difference of 7.5.
+
+```{r}
+R<-seq(-99,99,2)
+R
+S<-seq(200,57.5, -7.5)
+S
+```
+
+Vectors will be discussed in much greater detail later in the course.  For now, the commands above (and below in the document) are a sufficient introduction for their use within R.
+
+#PART 2 - Basic operations
+
+Below are basic operations that can be completed on scalars and vectors in R.  It is very important to note that the operations on vectors are "element by element" (e.g. Y+Q=(1,2,3,4)+(2,4,6,8)=(3,6,9,12)).  If vectors aren't the same length, a warning will appear but a computation will still be completed (we'll take a further look at this in one of the following exercises).
+
+  +               addition
+  
+  -               subtraction
+  
+  *               multiplication
+  
+  /               division
+  
+  ^               exponentiation
+  
+  sqrt(VARIABLE)  square root of variable
+  
+
+**Exercise 3**
+
+Find the each of the following by entering appropriate commands in the next code chunk. To reveal the 'math' in the code below for the first time, click on the code between the dollar signs.  For any further reveals, click on the 'down arrow' below and to the right of the code.  
+
+Note that f) involves vectors of different lengths (how is R determining the result?) and g) and h) involve both scalars and vectors.
+  
+  $$a)\> X+P \\ b)\>P^X \\ c)\>Q-Y \\d)\>Q\times Y\\e)\>\sqrt\frac{Y}{Q} \\f)\>R+S \\g)\>P\times S \\h)\>P^R$$
+  
+```{r}
+#a) 
+X + P 
+```
+
+```{r}
+#b)
+P^X
+
+```
+
+```{r}
+#c)
+
+Q - Y
+```
+
+```{r}
+#d)
+Q * Y 
+```
+
+```{r}
+#e)
+sqrt(Y/Q)
+
+```
+
+```{r}
+#f)
+R + S
+```
+
+```{r}
+#g)
+P*S
+
+```
+
+```{r}
+#h)
+P^R
+```
+
+Note: In the output above, e-NUMBER or e+NUMBER is equivalent to the scientific notation 10^(-NUMBER) or 10^(+NUMBER), respectively.
+
+#PART 3 - Importing data
+
+Data from .xlsx, .csv, .txt files (and more) can be imported into R. How to import these data sets will be discussed in great detail at a future date.  For now, all you need to know is that we will be importing data sets in the form of what are called 'tibbles' using the 'tidyverse' package in R.  The tidyverse contains many sub-packages in R and will be used extensively in this course.
+
+Run the following code to load the tidyverse package.
+
+[Note: The tidyverse is preloaded on campus computers.  If you are loading it for the first time on your own laptop include the line install.packages("tidyverse") before the library(tidyverse) line in the following code.  Once you've installed the package on your laptop, you will only need the library(tidyverse) command in the future.]
+
+```{r}
+#install.packages("tidyverse")
+
+library(tidyverse)
+
+
+```
+
+Now that the tidyverse package is installed, we can import data sets as tibbles into R. In general, the code used to import data is as follows:
+
+  DATASET_NAME<-read_csv("FILE_NAME.csv")  
+  
+(Replacing appropriately for the CAPITAL letters)
+
+**Exercise 4**
+
+Let's look at importing the Netflix.csv (found on the DATA100 MyLearningSpace page under "Weekly Lab Information").  Save the file in your DATA100 folder that you created earlier (the file should now appear in your working directory to the bottom right). Now import the data set into R in the code chunk below (name the data set NFLX).
+  
+To display the data set, just type its name in the line after the importing command (in this case NFLX) or type View(DATASET_NAME) to see it in a different window.
+  
+```{r}
+NFLX<-read_csv("Netflix.csv")
+```
+
+Notice that the data set has 4183 rows, each of which has the opening, high, low, and closing daily stock price (up to Jan. 3rd 2019) for Netflix along with the volume (number of trades), volume status, and daily change (increase in stock price -> Positive, decrease -> negative) on each trading day since it went public on the stock exchange. We will look at this data as we further progress through the worksheet.
+
+#PART 4 - Simple functions
+
+R has some pre-defined functions that may be introduced to you throughout the term in DATA100.  A brief list of some of the commands are given below (by no means is this list even close to all of them).
+
+  length(DATA_SET$VARIABLE_NAME)    gives the length of a vector or variable
+  
+  dim(DATA_SET)                     gives the dimensions of a data set (number of rows and columns)
+  
+  class(DATA_SET$VARIABLE_NAME)     gives the type of a data that a variable is (numeric, string, etc.)
+  
+  names(DATA_SET$VARIABLE_NAME)     gives the names of headers in a data set
+  
+  max(DATA_SET$VARIABLE_NAME)       gives largest value of a variable
+ 
+  min(DATA_SET$VARIABLE_NAME)       gives smallest value of a variable
+  
+  mean(DATA_SET$VARIABLE_NAME)      gives the average value of a variable
+  
+  median(DATA_SET$VARIABLE_NAME)    gives the "middle" value of a variable
+  
+  sum(DATA_SET$VARIABLE_NAME)       gives the sum of the values in a variable
+  
+  summary(DATA_SET$VARIABLE_NAME)   gives summary statistics of a data set (NOTE: VARIABLE_NAME not necessary)
+  
+  
+**Exercise 5**
+  
+Use the commands above to find each of the following in the NFLX data set.  
+
+Note: NFLX is the data set and the columns within the data set are the variables. 
+
+```{r}
+#The dimension of NFLX
+dim(NFLX)
+
+#The type of data in i) column 1 and ii) column 6
+class(NFLX$Date)
+class(NFLX$Volume)
+
+
+#The largest opening price
+max(NFLX$OpenPrice)
+
+#The smallest low price
+min(NFLX$LowPrice)
+
+#The average closing price
+mean(NFLX$ClosePrice)
+
+#A summary of the Netflix stock prices over its history (Note: some of your values above should be in this table)
+
+
+summary(NFLX)
+
+#The total number of Netflix stock trades made over its history 
+#(Note: Try it two different ways. First, using the sum() command which may or may not give you an error
+#due to the size of the number.  Second, using the mean() command and the number of values in the volume variable.
+
+sum(NFLX$Volume)
+
+
+```
+
+#PART 5 - FINDING DATA
+
+Once a data set is defined in R, there are a number of commands that can be used to find specific values.  Below is a list of some of those commands.
+
+  DATA_SET[a,b]    gives the value in row a, column b of a data set
+  
+  DATA_SET[,b]     gives column b in a data set
+  
+  DATA_SET$VARIABLE_NAME[a:b]    gives the values of a variable from entry a to entry b
+  
+  DATA_SET$VARIABLE_NAME[DATA_SET$VARIABLE_NAME>a]  lists the values of a variable greater than a
+  
+  DATA_SET$VARIABLE_NAME[DATA_SET$VARIABLE_NAME==a] lists includes all the times a variable equals a
+  
+  length(DATA_SET$VARIABLE_NAME[DATA_SET$VARIABLE_NAME==a]) finds the number of times the variable equals a
+  
+  DATA_SET$VARIABLE_NAME[DATA_SET$VARIABLE_NAME>a & DATA_SET$VARIABLE_NAME<b] lists values between a and b
+  
+  which(DATA_SET$VARIABLE_NAME==a) gives the row(s) in which a occurs (could also be >, etc.)
+
+**Exercise 6** 
+
+Use the commands above to find each of the following in the NFLX data set.
+  
+```{r}
+#List the stock prices in the 1000th row.
+NFLX[1000,]
+
+#Find the price of the Netflix stock in the 3333rd row and 4th column.
+NFLX[3333,4]
+
+
+#Find the total number of times that Netflix has been traded more than 10 million times in a day.
+
+NFLX$Volume[NFLX$Volume>10000000]
+
+#Find the total number of times that Netflix volume has been considered high.
+length(NFLX$VolumeStatus[NFLX$VolumeStatus == "high"])
+
+#Find the row(s) where the highest price was over than $400
+NFLX$HighPrice[NFLX$HighPrice>400]
+#Note that the output is a little confusing here. In the output, the tbl_df 1x8 is the 1000th row of NFLX, the tbl_df 1x1 is the price in entry [3333,4], and the R Console is the number of times the stock has been traded more than 10 million times in a day, the number of times its volume was high, and rows where its highest price was over $400.  We could have avoided this confusion by putting each line of code in its own code chunk.
+```
+
+#PART 6 - Data visualization AND ggplot()
+
+There are countless features and packages in R (of which the previous ideas are a very very small subset).  We will further introduce you to more of these throughout the weeks in DATA100 (focusing on the many packages within the tidyverse). Before we finish the today's introduction to R, however, let's get familiar with data visualization in R using the ggplot2 package within the tidyverse (discussed in lecture this past week).
+
+[Note: The tidyverse package should already be loaded from PART 3 above.]
+
+The ggplot command has two main (of which only the CAPITALIZATIONS need changed based on invididual needs):
+
+  1) ggplot(data=DATA_SET_NAME)  
+  
+      -> this tells R which data set we are plotting from
+  
+  2) +geom_FUNCTION(mapping=aes(x=X_VARIABLE,y=Y_VARIABLE)) 
+  
+      -> this tells R the independent and dependent variable and additional features can also be added to the plot.  
+      
+Note that geom_FUNCTION can be one of many options.  Some common ones are:
+
+  geom_bar        creates a bar chart (Note: only X_VARIABLE in aes)
+
+  geom_histogram  creates a histogram (Note: only X_VARIABLE in aes)
+  
+  geom_smooth     creates a smooth curve fitted to the data
+  
+  geom_line       joins data points by line segments
+  
+  geom_point      plots data as individual points
+  
+  geom_boxplot    creates boxplots plots for discrete values vs discrete/continuous values
+
+**Exercise 7**
+
+Use ggplot() and the above ideas to plot each of the following in R.
+
+```{r}
+#Plot the daily change variable using a bar chart.  
+ggplot(data = NFLX) + geom_bar(mapping = aes(x= DailyChange))
+
+
+```
+
+```{r}
+#Plot the high price (i.e. y) vs volume status (i.e. x) using a box plot.  
+
+ggplot(data = NFLX) + geom_boxplot(mapping = aes(x = VolumeStatus, y = HighPrice))
+```
+
+```{r}
+#Plot the volume vs high price as a smooth curve.
+ggplot(data = NFLX) + geom_smooth(mapping = aes(x= HighPrice, y= Volume))
+
+```
+
+We can additional features to the geom_FUNCTION command; specifically the aes() component. Some examples of which are:
+
+  color=VARIABLE_NAME     adds same colour to points that have another variable in common (discrete)
+
+  color=VARIABLE_NAME     creates a plot for each set of points that have another variable in common (continuous)
+
+  size=VARIABLE_NAME      matches size of points that have another variable in common
+
+  shape=VARIABLE_NAME     displays the same shape to points that have another variable in common
+
+**Exercise 8**
+
+Use the commands above complete the following.
+    
+```{r}
+#Plot the volume vs high price as points and ensure the points are the same colour when daily changes are the same.
+ggplot(data = NFLX) + geom_point(mapping = aes(x= HighPrice, y= Volume, color = DailyChange))
+
+
+```
+
+```{r}
+#Plot a line graph of the closing prices vs opening prices for each type of daily change.
+
+ggplot(data = NFLX) + geom_line(mapping = aes(x = OpenPrice, y = ClosePrice, color = DailyChange))
+```
+
+You can also combine plots by entering something of the form ggplot()+geom_FUNCTION()+geom_FUNCTION() provided the variables that you want to plot are similar.
+
+**Exercise 9**
+
+```{r}
+#Combine the two plots (smooth curve and points) for volume vs high price from above ensuring that the points are coloured by their VolumeStatus
+ggplot(data = NFLX) + geom_smooth(mapping = aes(x = Volume, y = HighPrice, color = VolumeStatus)) + geom_point(mapping = aes(x = Volume, y = HighPrice, color = VolumeStatus))
+
+```
+
+That finishes this week's introduction to R along with the ggplot2 package! A reminder that next week's lab will have two components:
+
+  1) During the first 30 minutes you will be completing an open book quiz in R on the content discussed in this file. So, be sure to download R and RStudio (see DATA100 Weekly Lab Information on MyLearningSpace for links) onto your personal device(s) and practice!  
+  
+  2) The final 50 minutes we will practice using code related to concepts discussed in the next two DATA100 lectures (which you will then be quizzed on in the first 30 minutes of the following lab).  Check MyLS to see what content will be covered.
+  
+Enjoy the weekend!
+
+

@@ -1,0 +1,375 @@
+---
+title: 'R Worksheet 3: Exploratory Data Analysis - Combining Ideas from the ggplot2 and dplyr packages'
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+The intention of this worksheet is to further explore data using ideas from the ggplot() and dplyr() packages discussed in Worksheets 1 and 2.  With exploratory data analysis you are not necessarily trying to confirm hypotheses but are attempting to form hypotheses (i.e. form questions to be answered later).
+
+As always, be sure to save your work as you progress through this file. To do so, use "File -> Save As" in the toolbar above and save it to the folder that you created for DATA100 in Week 1.  
+
+Once saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your DATA100 folder. You will want to do this each time you open a DATA100 file in RStudio.
+
+#SETUP
+
+As mentioned Week 1, there will be a major focus in this course on the tidyverse package within R that was designed for use in Data Science.  From the creators themselves, "the tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.".
+
+To load the tidyverse package (which contains the ggplot2 and dplyr packages that we will be discussing today), run the following code:
+
+[Note: If you are using your own laptop and the loading the tidyverse for the first time, you will need to type install.packages("tidyverse") in a line before library(tidyverse).]  
+
+```{r}
+library(tidyverse)
+```
+
+Also, save the GTA_Apt_Rentals_2018.csv file (found in under "Weekly Lab Information" on MyLS) in your DATA100 folder and then run the following code to import the apartment rental data set (primarily for the Greater Toronto Area in 2018). Once the code is run, the dataset can be referred to as RENTALS for the remainder of the worksheet.
+
+```{r}
+RENTALS<-read_csv("GTA_Apt_Rentals_2018.csv")
+RENTALS
+```
+
+#PART 1: INITIAL INSPECTION OF DATA 
+
+With exploratory data analysis there is no one way to analyze the data and find results. You really do need to explore the data. Let's take an initial look at the Greater Toronto Area apartments RENTALS data by creating a number of plots to see how the data can be visualised and then summarise the data.
+
+**Exercise 1: The "Bedrooms and Bathrooms" Data**
+
+Use ggplot(...) to create bar charts for i) the bedrooms and ii) the bathrooms data and use the summary(...) command to calculate some descriptive statistics of the same data.
+
+[Recall: ggplot(DATA_SET_NAME)+geom_FUNCTION(aes(x=X_VARIABLE,y=Y_VARIABLE)) from Worksheet 1 - see the worksheet for more details. ]
+
+```{r}
+#Hint: There is no y variable to be stated in a bar chart.
+#Part i)
+
+ggplot(data = RENTALS)+geom_bar(aes(x=Bedrooms))
+summary(RENTALS$Bedrooms)
+
+#Part ii)
+ggplot(RENTALS)+geom_bar(aes(x=Bathrooms))
+summary(RENTALS$Bathrooms)
+```
+
+Once you've done some initial visualizations and summarizing, you should start asking yourself some relatively simple questions about the data (and also be considering whether these answers are what you would expect). Examples of such questions are below.  Use the bar charts and summaries to answer them in the space provided.
+
+a) In terms of the number of bedrooms, which type of apartment appears to be most common?
+    
+    1 Bedroom appartments are most common. This is because of students who are studying and living by themselves.
+
+b) In terms of the number of bathrooms, which type of apartment appears to be most common?
+
+1 Bathroom    
+    
+c) In terms of the number of bathrooms and bedrooms, what would you guess is the most common type of apartment?
+
+ 1 Bedroom and bathroom   
+    
+d) What do the bar charts suggest about the skewness of the data for the number of bedrooms and bathrooms?
+
+    
+    
+e) What is the mean number of bedrooms in an apartment?  What is the median number?
+
+   
+    
+f) What is the mean number of bathrooms in an apartment?  What is the median number?
+
+   
+
+g) Can your answers to parts e) and f) be used to further strengthen your answer to part d)?
+
+   
+    
+h) Does any of the data seem "out of place"? That is, are there any extreme outliers?
+
+    
+    
+**Exercise 2: The "Longitude and Latitude" Data**
+
+Now let's look at the longitude (a measure of east/west location on earth) and latitude variables (south/north location on earth).  Use ggplot(...) to create histograms for i) the latitude and ii) the longitude data and use the summary(...) command to calculate some descriptive statistics of the same data.
+
+[Note: Add ,binwidth=2 outside of the aes() but inside the geom_FUNCTION() to set the bar widths to 2 in the histograms.]
+
+```{r}
+#Part i)
+ggplot(RENTALS)+geom_histogram(aes(x=Latitude),binwidth=2)
+summary(RENTALS$Latitude)
+
+#Part ii)
+ggplot(RENTALS)+geom_histogram(aes(x=Longitude),binwidth=2)
+
+summary(RENTALS$Longitude)
+
+```
+
+Use the histograms and summaries to answer the following questions.
+
+a) In terms of latitude (i.e. south/north), which range appears most common?
+    
+ 43 to 45
+
+b) In terms of longitude (i.e. east/west), which range appears most common?
+
+    
+    
+c) What are the mean and median latitude of an apartment in the data set?
+
+    
+    
+d) What are the mean and median longitude of an apartment in the data set?
+
+    
+
+e) Does any of the data seem "out of place"? That is, are there any extreme outliers? What does this suggest about the data set claiming that the apartments are from the Greater Toronto Area?
+
+    
+    
+**Exercise 3: The "Price and Sq.Ft" Data**
+
+Use the c(summary(DATA_SET$VARIABLE_NAME),st.dev=sd(DATA_SET$VARIABLE_NAME)) command to calculate some descriptive statistics of i) the price (i.e. monthly cost to rent) and ii) the square footage (i.e. apartment size) data.
+
+```{r}
+#Part i)
+c(summary(RENTALS$Price),st.dev=sd(RENTALS$Price))
+
+#Part ii)
+c(summary(RENTALS$Sq.Ft),st.dev=sd(RENTALS$Sq.Ft))
+
+```
+Use the summaries to answer the following questions.
+
+a) What are the minimum, maximum, mean, and median monthly rental prices of an apartment?
+    
+    
+    
+b) What is the standard deviation in monthly rental prices?  Logically, does this answer make sense?
+
+    
+
+c) If the rentals are meant to be for the "average Ontarian", does any of the price data seem "out of place"? That is, are there any extreme outliers? 
+
+    
+    
+d) What are the minimum, maximum, mean, and median square feet of an apartment?
+    
+    
+    
+e) Does any of the square footage data seem "out of place"? That is, are there any extreme outliers? 
+    
+    
+    
+#PART 2: FURTHER INVESTIGATION OF THE DATA
+
+So you've completed your initial investigation into the data and found that the bedrooms, bathrooms, and square footage data all seemed reasonable while the longitude, latitude, and price data seem unreliable in terms of apartments for rent in the Greater Toronto Area by an average Ontarian.
+
+We will now turn to dplyr to help us with these "questionable" variables.
+
+**Exercise 4: The "Latitude and Longitude" Data Re-visited**
+
+Doing an internet search it is easy to find that the latitude and longitude on Toronto is approximately 43.7 degrees latitude (north/south), -79.4 degrees longitude (east/west).
+
+Use the RENTALS<-mutate(...) command to create two new variables in the data set:
+
+The first variable should be the difference between each apartment's latitude and Toronto's latitude (call the variable lat.diff)
+
+The second variable should be similar to the first new variable but using each apartment's longitude (call it long.diff).
+
+```{r}
+RENTALS<-mutate(RENTALS,lat.diff=Latitude-43.7,long.diff=Longitude+79.4)
+RENTALS
+
+```
+
+Again, doing a quick internet search will reveal that a 1 degree change in latitude is over 100 kilometers change in distance while, at 79.4 degrees longitude, a 1 degree change is over 80 kilometers change in distance.  Also, the Greater Toronto Area encompasses approximately 150 km west to east and 150 km north to south. 
+
+Use the arrange(...) command to sort the RENTALS lat.diff variable in descending order.
+
+```{r}
+arrange(RENTALS,desc(lat.diff))
+```
+
+Modifying the arrange(...) command above as needed, how many apartments are:
+
+a) more than 1 degree (i.e. lat.diff > 1) or over 100 km north of Toronto?  
+
+b) more than 1 degree south of Toronto?  
+
+c) more than 2 degrees or over 160 km east of Toronto? 
+
+d) more than 2 degrees or over 160 km west of Toronto? 
+
+   [Notice how far some are from Toronto: -34.68 degrees (or ~3000 km) west of Toronto is basically Calgary.]
+
+Use the filter(...) command to redefine the RENTALS data set (call the new data set RENTALS2) so that it only includes apartments within 1 degree latitude and 2 degrees longitude of Toronto's latitude and longitude stated above.  
+
+[Note: From here on out we will use the RENTALS2 data set when referring to the data.]
+
+```{r}
+RENTALS2<-filter(RENTALS,lat.diff<1 & lat.diff>(-1)) %>%
+filter(long.diff<2 & long.diff>(-2)) 
+RENTALS2
+```
+
+Re-create the create histograms for the latitudes and longitudes in the filtered RENTALS2 data set and use the summary command to calculate some descriptive statistics of the same data.
+
+[Note: Modify the binwidth for each histogram to suit the needs of the data.]
+
+```{r}
+ggplot(RENTALS2)+geom_histogram(aes(x=Latitude),binwidth=0.1)
+
+```
+
+Use the histograms and summaries to answer the following questions.
+
+a) How does the range of the new latitude variable compare to your answer in Part 1, Exercise 2 above?
+    
+    
+
+b) How does the range of the new longitude variable compare to your answer in Part 1, Exercise 2 above?
+    
+    
+
+c) How do the mean and median of the new latitude variable compare to your answers in Part 1, Exercise 2 above? 
+ 
+     
+    
+d) How do the mean and median of the new longitude variable compare to your answers in Part 1, Exercise 2 above? 
+
+    
+
+e) Looking at your answers to parts c) and d), which appears to be a more 'stable' measure of central tendency when dealing with non-symmetric data and/or outliers?    
+
+  
+ 
+**Exercise 5: The "Price" Data Re-visited**
+
+As discussed above, clearly the price data has some extreme outliers - most notably the apartment that could be rented for 65 dollars a month and the apartment that could be rented for 535,000 dollars a month.  If the data set is to represent apartment rentals in the GTA for an average resident of Ontario then those may be considered data entry errors.  
+
+Instead of removing the apartments with unusual prices, use the mutate(...) command to create a new variable (call it P) that replaces rental prices in RENTALS2 that are less than 1000 dollars or greater than 4000 dollars in the data set with NA (the reason we may want to do this is so that the lat./long., number of bedrooms, etc. information is not lost from the RENTALS2 data for these apartments).
+
+Hint:
+
+When defining P within the mutate(...) command, use P=ifelse(...) which has 3 components separated by commas:
+
+i) The first component in the ifelse() command is the data you want to exclude using operators like <,>,|,&,==, etc.. 
+
+ii) The second component is the value to be assigned if the condition in the first component is satisfied (here: NA).
+
+iii) The third component is the value to be assigned if the condition in the first component is not satisfied (here: keep the original price).
+
+Once created, sort the RENTALS2 data set by the price variable in descending order to ensure that the unusual prices have been assigned NA.
+
+```{r}
+RENTALS2<-mutate(RENTALS2,P=ifelse(Price<1000|Price>4000,NA,Price))
+arrange(RENTALS2,desc(Price))
+
+```
+
+Create a histogram for the new variable P in RENTALS2 (adjusting binwidth as necessary) and use the summary(...) command (include the standard deviation as was done for the Price variable in Part 1, Exercise 3 above) to calculate some descriptive statistics of the P data.
+
+[Note: You will need to include ,na.rm=TRUE in the sd(...) command so that R knows to ignore the NA values in P (na.rm means remove NA). The summary(...) command automatically excludes these values so its not necessary there.]
+
+```{r}
+c(summary(RENTALS2$P),st.dev=sd(RENTALS2$P,na.rm=TRUE))
+
+```
+
+Use the histogram and summary to answer the following questions.
+
+a) How does the range of the new monthly rental price variable P compare to the range of the price variable in Part 1, Exercise 3?
+    
+    
+
+b) How do the mean and median of the new monthly rental price variable P compare to your answer in Part 1, Exercise 3?
+    
+     
+
+c) Looking at your answers to parts a) and b), do they strengthen your argument for the "more stable" measure of central tendency?    
+
+    
+    
+#PART 3: RELATIONSHIPS BETWEEN VARIABLES**
+
+Now that we have a data set that seems to reasonably represent the rental prices for an average Ontarian in the Greater Toronto Area, you should be asking yourself further questions about whether some of the variables have any sort of relationships between them. 
+
+[Note: For the remainder of the worksheet, any mention of rental prices is referring to the new price variable P in the RENTALS2 data set.]
+
+**Exercise 6: Comparing The "Bedrooms and Prices" Data**
+
+Create box plots of the number of bedrooms vs the P variable.
+
+[Note: Include ,varwidth=TRUE outside the aes(...) but inside the geom_FUNCTION(...) command.]
+
+```{r}
+RENTALS2$Bedrooms<-as.factor(RENTALS2$Bedrooms)  #Don't change this line. For reasons that will be explained later in the course, we need to change the variable type for bedrooms before creating the boxplot. Input the ggplot(...) command below.
+ggplot(RENTALS2)+geom_boxplot(aes(Bedrooms,P),varwidth=TRUE)
+
+```
+
+Use the box plots to answer the following questions.
+
+a)  Looking at the number of bedrooms vs the rental prices it looks as though one of the box plots is showing some potential outliers?  If these are not to be considered data entry errors, what could these outliers represent in the data set?
+
+    
+
+b) Notice that the box plots are also of varying width (this is a result of the varwidth=TRUE in the geom_FUNCTION(...) command).  What do you think the widths represent in the context of this problem?
+
+   
+    
+**Exercise 7: Comparing The "Prices and Latitude" Data**
+ 
+Before we look at the scatter plot comparing this data, do you think there is an obvious relationship between rental prices and the distance (i.e. lat./long.) an apartment is away from Toronto's city center? Basically, form a hypothesis of what you think might be revealed.  
+
+[Your 'gut instinct' is probably that apartment prices are very expensive in the city center and gradually decrease the further away from the city center that the apartment is.  Let's check this out.]
+    
+Now create a scatter plot of apartment rental prices vs the latitudinal differences (i.e. lat.diff). 
+
+[Hint: Put the aes(...) in the ggplot(...) command (means it will apply to all 'geoms') and include +geom_smooth(method="lm") after geom_point(...) to include what's called the line of best fit.]
+
+```{r}
+ggplot(RENTALS2,aes(P,lat.diff))+geom_point()+geom_smooth(method="lm")
+
+```
+
+a)  Looking at the scatter plot, the line of best fit appears to be almost horizontal.  What does this tell you about the relationship between the prices and the latitudinal (north/south) differences?
+
+    
+    
+b)  There is some useful information in the scatter plot above, however.  What does the scatter plot tell you about apartments for rent between 1000 dollars and 2000 dollars and their location relative to the city center?  What about apartments that are greater than 2500 dollars?
+
+    
+    
+**Exercise 8: Comparing The "Prices and Square Footage" Data**
+
+Now create a scatter plot of apartment prices vs their square footage (i.e. Sq.Ft). To reveal a little more information, colour the points in the plot by the number of bedrooms each that each apartment has.
+
+```{r}
+ggplot(RENTALS2)+geom_point(aes(P,Sq.Ft,colour=Bedrooms))
+```
+
+a)  Looking at the resulting scatter plot, does there appear to be much of a relationship between the apartment prices and their square footage?
+
+    
+    
+Let's take a look at the scatter plots of apartment prices vs square footage when we take the number of bedrooms into consideration. To do this, add the command +facet_wrap(~Bedrooms) after the geom_point(...) command to create a scatter plot for each of 1 bedroom, 2 bedroom, and 3 bedroom apartments.
+
+[Note: Also include a line of best fit in each of the plots.]
+
+```{r}
+ggplot(RENTALS2,aes(P,Sq.Ft))+geom_point()+facet_wrap(~Bedrooms)+geom_smooth(method="
+lm")
+```
+
+b) Looking at the individual scatter plots, is any further information revealed about the relationship between an apartment's price and its square footage?
+
+  
+    
+That finishes this week's discussion on exploratory data analysis.  As you can see from above, there is no set procedure for exploring data.  We could have "went all day" exploring the variables and their relationships with others.  You need to use all of the tools available to analyze the data and then form your own questions/answers about what the data is trying to tell you!  
+
+A reminder that next week's lab will have two components:
+
+  1) During the first 30 minutes you will be a completing an open book quiz in R on the content discussed in this file (so be sure to practice!).  
+  
+  2) The final 50 minutes we will practice using code related to concepts discussed in your most recent lectures (which you will then be quizzed on in the first 30 minutes of the following lab).  Check MyLS to see what content will be covered.

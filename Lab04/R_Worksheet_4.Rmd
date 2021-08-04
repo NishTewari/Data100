@@ -1,0 +1,414 @@
+---
+title: 'R Worksheet 4: Tibbles (Data Frames), the readr package, and the tidyr package'
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+The intention of this worksheet is three-fold:
+
+  A. to discuss how to import data sets using the readr package and, more specifically, 
+  
+  B. to explore a specific type of data frame in R called a tibble, and lastly,
+  
+  C. to discuss 'tidy' data and how to create it using the tidyr package.
+
+As always, be sure to save your work as you progress through this file. To do so, use "File -> Save As" in the toolbar above and save it to the folder that you created for DATA100.  
+
+Once saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your DATA100 folder. You will want to do this each time you open a DATA100 file in RStudio.
+
+#SETUP
+
+Load the tidyverse package (which contains the readr, tibble, and tidyr packages we will be discussing today) by running the following code:
+
+[Note: If you are using your own laptop and the loading the tidyverse for the first time, you will need to type install.packages("tidyverse") in a line before library(tidyverse).]  
+
+```{r}
+library(tidyverse)
+```
+
+#PART 1: Tibbles
+
+If you do a quick internet search for 'importing data sets into R' you'll see that there are numerous methods/commands for accomplishing this - read.xls, read.csv, read.table, read_csv, etc..  The majority of these commands, however, require you to know a lot about the data set already (are there variable names - headers - in the data set? is the data separated by commas, semi-colons, etc. in the data set?) and are cumbersome to use.  Most of the commands will define the data set as a standard data.frame in R, but one of the commands will define the data set as what's called a tibble (a data frame that was designed specifically for use within the tidyverse package).
+
+**Example 1**
+
+Run the following code used to import the Beers.csv data set (which contains information on over 2000 craft beers from the United States) found on MyLearningSpace.
+
+[Note: header=TRUE tells R that there are variable names in the data set and sep="," tells R that the values are separated by commas.]
+
+```{r}
+BEER<-read.csv("Beers.csv",header=TRUE,sep=",")
+BEER
+```
+
+Notice that the variable types are underneath the column names and are defined as follows (we will discuss these in greater detail later in the course):
+
+  fctr stands for factor (defined later in course) 
+  dbl stands for double and represents a numeric variable
+  int stands for integer and represents a numeric variable with only integer responses
+  chr stands for character and represents strings (or words, etc.)
+
+**Example 2**
+
+Looking at the data set above, do you believe it was imported correctly? Wouldn't you expect "Type" and/or "Flavour" to be of variable type character?
+
+Well, if we are to follow the same command structure we used above, we can alter how the variables are defined by entering/running the following code:
+
+```{r}
+BEER<-transform(BEER,Type=as.character(Type),Flavour=as.character(Flavour))
+BEER 
+```
+
+At this point, you are probably thinking 'how does he expect me to remember all that code for importing a data set'? Well, I don't.  What you are going to find below is that this is a standard data.frame in R - not a tibble, and tibbles tend to be much easier to work with than the standard data.frame in R. 
+
+**Exercise 1**
+
+Check to see whether the BEER data set is loaded as a standard R data frame by entering is.data.frame(BEER) in the space below and running it.  Similarily, enter is_tibble(BEER) to check to see if the BEER data set is loaded as a tibble.
+
+```{r}
+is.data.frame(BEER)
+is_tibble(BEER)
+
+```
+
+Convert the BEER data set to a tibble by redefining BEER using BEER<-... and changing the 'is' to 'as' in the command above. Then use the command to check its status as a tibble.
+
+```{r}
+BEER<-as.data.frame(BEER)
+is_tibble(BEER)
+
+```
+
+Now that the BEER data set is defined as a tibble there are many options that can be performed (some of which will be introduced throughout the course). One, for example, is the ability to see the entire BEER data set. Type View(BEER) which will open the data set in a viewer (in a tab along the top).  
+
+```{r}
+view(BEER)
+
+```
+
+We will come back to this shortly - there is obviously a much easier way to create a tibble.  For now, let's take a look at creating tibbles 'from scratch'.
+
+#Part 2 - Creating Tibbles From Vectors
+
+If you would like to create a tibble without importing a data set (i.e. from scratch) you can use the tibble() command. 
+
+**Example 3**
+
+Run the following code to define a data set that has 3 variables and 5 responses for each variable as a tibble.
+
+```{r}
+DATA<-tibble(x=1:5,y=c(2.5,4,6.3,8,10),z=c("a","a","a","a","a"))
+DATA
+```
+
+Looking underneath each variable, what classification/type has the tidyverse automatically given to each variable?
+
+   
+
+Note that when defining a tibble if the values of one variable are all equivalent, then you just need to list it once (for example, var=1). This is referred to as 'recycling'.
+
+**Exercise 2**
+
+Use 'recycling' to redefine the tibble above.
+
+```{r}
+z = 1 
+
+```
+
+
+#PART 3: The readr Package and Importing Data
+
+Recall from Part 1 the convoluted code required to import the Beer.csv data set as a standard data frame in R. Like the tibble package, the readr package is specifically designed for use within the tidyverse package in R and is used for importing tibbles into R.  With the readr package we can now use commands like read_csv() which imports common-separated files (or read_tsv(...) which imports tab-delimited files, etc.) as tibbles in R.
+
+From here on out in this course we will focus on using the read_csv(...) command. 
+
+**Exercise 3**
+  
+In the space below, copy and paste the code from Example 1 above. Change the first line of the code to use read_csv instead of read.csv and then run the code.
+
+```{r}
+BEER<-read_csv("Beers.csv")
+BEER
+```
+
+You will receive an error message.  This is because the read_csv(...) is designed to read headers, etc. automatically. Try entering the code again but delete all of the options like header, etc.  Be sure to display to the BEER data set after it is defined and check whether it is indeed defined as a tibble.
+
+```{r}
+
+```
+
+Much easier! Looking at the output you will see that the data set headers are automatically defined and the variables are defined as types that we originally had expected them to be (e.g. "Type" is of type character).  
+
+Now, depending on the nature of the data set, you may need to do some modifications.  Note that if your data set:
+
+a) does not have column (i.e. variable) names already defined, then you can add column names by using the command read_csv("File_Name",col_names=c(VARIABLES)).
+
+b) has multiple rows of "meta data" at the top of the file, then you can use read_csv("File_Name",skip=n) to skip the first few rows of the data set when importing it.
+
+#PART 4: Parsing a Data Set
+
+The parse_****(...) command can be used to parse (change, convert, analyze) a vector in R.  
+
+**Example 4**
+
+Run the code below and analyze the results.
+
+```{r}
+parse_number(c("$1234.56","25%"))
+parse_time("01:00 pm")
+```
+
+You can also have R display what classification it thinks a variable has.  For example, pick a variable in the BEER data set and use the guess_parser(DATA_SET$VARIABLE) command to find its classification upon importing.
+
+**Exercise 4**
+
+Use the command above to have R 'guess' (or display) the "Flavour" variable type from the BEER data set.
+
+```{r}
+guess_parser(BEER$Flavour)
+
+```
+
+What is important to us in this section is how to parse a data set.  If you take a look at the BEER data set you will see that R tried to 'guess' at the variable types.  It did quite well for most of the variables but for some data sets there may be missing variables which R can't read so it will define these variables as characters/strings by default or just misinterpret the variable type.
+
+[Note: The readr package does a very good job of treating NAs as empty cells and ignoring them when determining the variable types.]
+
+**Example 5**
+
+Run the following code to parse the "ID" variable in the BEER data set to an integer (it is currently of type double).
+
+```{r}
+BEER<-read_csv("Beers.csv",col_types=cols(ID=col_integer()))
+BEER
+```
+
+**Exercise 5**
+
+Try to parse the "Content", "ID", and "BrewID" variables in the BEER data set to integers.
+
+[Note: This can be done in one line of code by separating the changes within the cols(...) component of the read_csv(...) command by commas ',']
+
+```{r}
+
+cols()
+
+```
+
+Notice that some errors appear above. Type problems(BEER) to see what is meant by 'parsing failures'.
+
+```{r}
+
+```
+
+It appears that R didn't like how we tried to force the "Content" variable to be of type integer and is warning us of that (which is good as "Content" clearly isn't of type integer).  Do note though, R still converted the data it could read to integer values as requested.  This can be verified by entering, for example, class(BEER$Content) in the space provided. In this case, we should convert it back to the type dbl as it was before.  
+
+```{r}
+
+```
+
+As mentioned in the previous exercise, you can change multiple variable types simultaneously when importing the data set by separating the changes within the cols(...) component of the read_csv(...) command by commas ','.  The parsing options are as follows:
+
+  col_date()        Date
+  
+  col_datetime()    POSIXct (date-time)
+  
+  col_double()      double (numeric)
+  
+  col_factor()      factor
+  
+  col_guess()       let readr guess (default)
+  
+  col_integer()     integer
+  
+  col_logical()     logical
+  
+  col_number()      numbers mixed with non-number characters
+  
+  col_numeric()     double or integer
+  
+  col_skip()        do not read
+  
+  col_time()        time
+  
+
+#PART 5 - Writing a Data Set Back to a Disk*
+
+Once you are done cleaning up, filtering, or modifying a data set, we can always write (i.e. export) it back to a disk/folder using write_***(...) in R.  The options are as follows:
+
+  write_csv()         Comma separated values
+  
+  write_excel_csv()   CSV intended for opening in Excel
+  
+  write_delim()       General delimited files
+  
+  write_file()        Single string, written as is
+  
+  write_lines()       Vector of strings, one element per line
+  
+  write_tsv()         Tab delimited values
+  
+For our purposes, again we will focus on the write_csv(...) command.  
+
+**Exercise 6**
+
+Use the select(...) and arrange(...) commands from dplyr to create a data set (call it BEER_WRITE) that only has the "Flavour" and "BrewID" columns as its variables with the "BrewID" listed in ascending order.  Then use the write_csv(DATA_SET,"NEW_FILE_NAME") command to save it to your DATA100 folder (substituting appropriately for the CAPITAL letters).
+
+```{r}
+
+```
+
+If you check your DATA100 folder you should now see a file named BEER_WRITE.csv that can be opened in, for example, Excel or Notepad.
+
+#PART 6: Tidy data
+
+The final (and most important?) part of today's worksheet is discussing tidy data and the tidyr package.
+
+According to "Wickham and Grolemund" (the authors of the course textbook), there are 3 rules that must be satisfied in order for a data set to be considered 'tidy'.  They are:
+
+  1) Each variable must have its own column.
+  
+  2) Each observation must have its own row.
+  
+  3) Each value must have its own cell.
+  
+This can be furthered interpreted as saying:
+
+  1) Put each data set in a tibble.
+  
+  2) Put each variable in a column.
+  
+**Exercise 7**
+  
+The tidyverse packages that we have discussed so far in the course are all specifically designed to deal with tidy data.  To explore how to actually tidy your data, let's continue to look at Beers.csv data set (you may have noticed in the previous parts that the data set is indeed not tidy).
+
+Before we get going on using the tidyr package, let's reload the Beers.csv to start fresh with the original data set. Run the code below (which uses the arrange(...) command to view the data set by "ID").
+
+```{r}
+BEER<-read_csv("Beers.csv")
+arrange(BEER,ID)
+```
+
+#PART 6a): The gather(...) command in tidyr
+
+The gather(...) command becomes quite useful when a portion of the columns in a data set are not variables (thereby disobeying rule #1 about tidy data) but are values or observations within a variable.  The gather(...) command allows us to reshape the data set's layout so that the columns in the data set only represent variables. 
+
+In general, the command is used as follows:
+
+gather(DATA_SET,"COLUMN_1",...,"COLUMN_n",key="NEW_COLUMN_1",value="NEW_COLUMN_2") command where:
+
+  i) "COLUMN_1",...,"COLUMN_n" lists the columns you want to combine.
+  
+  ii) key="NEW_COLUMN_1" is the name of the new variable that will have values assigned by the old column names.
+  
+  iii) value="NEW_COLUMN_2" is the name of the new variable that will have values assigned by the old column values (or cells).
+  
+**Exercise 8**
+
+Take a look at the BEER data set.  Notice that the last five columns represent the volume (or size) of each beer in fluid ounces and the entry in each cell is the beer's name.  
+
+a) Create a data set named BEER2 that replaces the last 5 columns in the BEER data set with 2 columns called "Volume" and "Name" using the gather(...) command.
+
+b) Use the arrange(...) command to view the new data set by "ID".
+    
+```{r}
+BEER2<-
+```
+
+Note, however, that the original data only listed each beer ID two times (i.e. once for its Bitterness or IBU and once for its alcohol percentage or AP) but the new data set lists each beer ID ten times.  This occurs since, for example, ID 1 now has 8 "NAs" for volume along with two 12 ounce values (technically, the beer could have been brewed in all 5 sizes but it wasn't).  
+
+c) Use the filter(...) command to redefine BEER2 as BEER3 so that it excludes the "NA"s in the "Name" variable (hint: !is.na(VARIABLE)) and then use the arrange(...) command to sort BEER3 by "ID".
+
+[Note: Each beer ID should now only appear twice as it did in the original data set.]
+
+```{r}
+
+```
+
+You should now have 7 columns in your data set - all of which can be classified as variables in the data set. That is, the BEER3 data set now satisfies Rule #1 for tidy data!  
+
+What about Rule #2 (each observation must have its own row) though? It appears that each beer ID/Name occupies more than one row (i.e. each ID shows up twice). The following command can help us out with that.
+
+#PART 6b): The spread(...) command in tidyr
+
+As you can probably guess, the spread(...) command is useful for taking observations in a single column of a data set and creating variables out them (essentially the opposite of the gather(...) command).  
+
+In general, the commmand is used as follows:
+
+spread(DATA_SET,key="COLUMN_1",value="COLUMN_2") where:
+
+  i) "COLUMN_1" is the column whose cells will be used for the new variable names.
+  
+  ii) "COLUMN_2" is the column whose cells will be used in the new variable cells.
+  
+**Exercise 9**
+
+As has been mentioned, notice that the BEER3 data set still has 2 rows for each beer ID (or Name of beer).  
+
+a) Define BEER4 using the spread(...) command so that it converts the "Type" variable into 2 separate variables - one called IBU (the international bitterness unit) and one called AP (the alcohol percentage as a decimal) - by "Content". 
+b) Use the arrange(...) command to display BEER4 by "ID".
+  
+```{r}
+
+```
+
+BEER4 is now a tidy data set!  Check for yourself whether i) all of the columns are variables, ii) each observation (i.e. ID/Name) has its own single row, and iii) each cell contains its own value.
+
+#PART 6c): The separate(...) command in tidyr
+
+Recall that one of the rules for "tidy data"" is that each cell has its own value.  What if it doesn't?  That's where the separate(...) command can help.  It can be used to "pull apart" a column into multiple columns.
+
+In general, the command is used as follows:
+
+separate(DATA_SET,"COLUMN_TO_SEPARATE",into=c("New_Variable_1",...,"New_Variable_n"),sep="SYMBOL") 
+
+where SYMBOL is the separator used in the data set (e.g. "," or "&" or "/")
+
+**Exercise 10**
+
+Let's explore this commmand using the Breweries.csv data set found on MyLearningSpace.  Save the data set to your DATA100 folder and then import it as a tibble in R (call it BREW).  Once defined, use the arrange(...) command to view the data set by "Brewery".
+
+```{r}
+
+```
+
+Notice that each observation in the "Brewery" variable has multiple outcomes.  
+
+a)  Use the separate(...) command to express the "Brewery" variable as two variables called "BrewID" and "BrewName". Call the new data set BREW2.
+
+b) Use the arrange(...) command to sort BREW2 by "BrewID".
+
+```{r}
+
+```
+
+The BREW2 data set should now have 4 columns with the cells in each containing only one value/observation.
+
+#PART 6d): The unite(...) command in tidyr
+
+Similar to how gather(...) and spread(...) appear to perform opposite actions, separate(...) and unite(...) do too.  The unite(...) command can be used to combine multiple columns into a single  column. 
+
+In general, the command is used as follows:
+
+unite(DATA_SET,"NEW_VARIABLE_NAME","COLUMN_1_TO_COMBINE",...,"COLUMN_n_TO_COMBINE",sep="SYMBOL")
+
+where SYMBOL can be almost any character(s) you choose (e.g.",","a word", etc.) and will be used between combined values in each cell.
+
+**Exercise 11**
+
+a)  Looking at the BREW2 data set, suppose that you would prefer the "City" and "State" variables be one variable called "Location".  Create a new variable called "Location" that combines the "City" and "State" variables separated by a ", " (comma and space).  Call the new data set BREW3.
+
+b) Use the arrange(...) command to sort BREW3 by "BrewID". 
+
+```{r}
+
+```
+
+That complete this week's discussion on tibbles, importing/exporting data sets using the readr package (i.e. use the read_csv("FILE_NAME.csv") command to load data sets as tibbles in R!), and tidy data. The tidyr package, just like dplyr, is a very powerful package that allows you to manipulate and clean your data sets. 
+
+As usual, next week's lab will have two components:
+
+  1) During the first 30 minutes you will be a completing an open book quiz in R on the content discussed in this file (so be sure to practice!).  
+  
+  2) The final 50 minutes we will practice using code related to concepts discussed in your most recent lectures (which you will then be quizzed on in the first 30 minutes of the following lab).  Check MyLS to see what content will be covered.

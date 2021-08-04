@@ -1,0 +1,197 @@
+---
+title: "R Worksheet 5: More from the dplyr package"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+The intention of this worksheet is to focus on combining variables from different tidy data sets using the dplyr package.
+
+As always, be sure to save your work as you progress through this file. To do so, use "File -> Save As" in the toolbar above and save it to the folder that you created for DATA100 in Week 1.  
+
+Once saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your DATA100 folder.
+
+#SETUP
+
+Load the tidyverse package (which contains the dplyr package we will be discussing today) by running the following code.
+
+[Note: If you are using your own laptop and the loading the tidyverse for the first time, you will need to type install.packages("tidyverse") in a line before library(tidyverse).]
+
+```{r}
+library(tidyverse)
+```
+
+Also, save the Beers.csv and Breweries.csv files (found in under "Weekly Lab Information" on MyLS - these may already be saved from last week's worksheet) in your DATA100 folder and then run the following code to import the data sets (which contain information on over 2000 craft beers and breweries from the United States). Once the code is run, the datasets can be referred to as BEER and BREW, respectively.
+
+```{r}
+BEER<-read_csv("Beers.csv")
+BEER
+BREW<-read_csv("Breweries.csv")
+BREW
+```
+
+#PART 1: Tidy data Revisited
+
+Recall from last week the following definition of tidy data:
+
+  1) Each variable must have its own column.
+  
+  2) Each observation must have its own row.
+  
+  3) Each value must have its own cell.
+  
+In this week's worksheet we will again want to work with tidy data.  Also, to see what is happening with the join() commands, we will want to work with 'smaller' data sets. Let's do this by cleaning the BEER and BREW data sets and then sample from them.
+  
+**Exercise 1**
+
+Create a new data set called BEER24 that:
+
+i) Uses commands from last week and piping to tidy the BEER data set.
+
+[Hint: Ignoring the arrange() commands, see Exercises 8 and 9 in last week's worksheet.]
+
+ii) Only includes the beers that are 24 ounces.
+
+iii) Only has "BrewID" and "Name" as the variables.
+
+```{r}
+is.tibble(BEER)
+
+```
+
+**Exercise 2**
+
+Create a new data set called BREWCA that:
+
+i) Uses commands from last week to separate the "Brewery" variable into two variables called "BrewID" and "BrewName"
+
+[Hint: Ignoring the arrange() command, see Exercise 10 in last week's worksheet.]
+
+ii) Only includes breweries from California (i.e CA)
+
+iii) Only has "BrewID" and "BrewName" as the variables.
+
+```{r}
+#Note: Include transform(BREW,BrewID=as.numeric(BrewID)) as the final 'pipe' to convert BrewID to type numeric.
+
+```
+
+#PART 2: Mutating joins in the dplyr package
+
+Now that we have small, tidy data sets to work with we can move on to looking at 'joins' in the tidyverse package.  
+
+So far we have only discussed commands within a single data set.  What if, however, our data was spread amongst many data sets? This is where the join(...) commmands from the dplyr package are of use.  Each join(...) commmand can be thought of as either a "mutating join" or a "filtering join" which are discussed in more detail below. 
+
+Simply put, "mutating joins" use information from one data set to add variables to another data set (kind of like mutate(...) does within a data set). 
+
+There are four such join(...) commands to consider:
+
+i) left_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE") 
+   which displays all of DATA_SET_1 and, where the "COMMON   
+   VARIABLE" has a matching value, includes the variables
+   from DATA_SET_2 
+    
+ii) right_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE")
+    which displays all of DATA_SET_2 and, where the "COMMON   
+    VARIABLE" has a matching value, includes the variables
+    from DATA_SET_1 
+    
+iii) full_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE")
+     which displays all DATA_SET_1 and DATA_SET_2 variables 
+     for all values in "COMMON_VARIABLE".
+     
+iv)  inner_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE")
+     which only displays DATA_SET_1 and DATA_SET_2 variables 
+     for the common values in the "COMMON_VARIABLE".
+     
+[Note: If you are trying to match columns/variables with different names, use by=c("COLUMN_1_NAME=COLUMN_2_NAME") in the commands.]
+
+**Exercise 3**
+
+Use a "mutating join" command (matching by "BrewID") to display a data set that:
+
+a) includes all of the 24 ounce beers and adds the brewery names for those that are brewed in California.
+
+b) only includes the 24 ounce beers from California.
+
+c) has the same output as in part a) but uses a different command.
+
+d) includes all of the data 24 ounce beers and all of the California breweries.
+
+```{r}
+#Part a)
+ BREW<-(BrewID"")
+#Part b)
+ 
+#Part c)
+ 
+#Part d)
+ 
+```
+
+Notice that:
+
+-> although (for example) "Mike Hess Brewing Company" is a brewery in the BREWCA data set it didn't appear in the output for parts a) and c) as it doesn't brew a 24 ounce beer. Opposite to that though, the beer named "Boxer" did appear since it is 24 ounces but no BrewName was included as it isn't from California.
+
+-> in the output for part b) there are only 3 rows in the data as there are only three 24 ounce beers from California.
+
+-> in the output for part d), there are 60 rows - 19 of which are the 24 ounce beers not from California, 38 of which
+are the Californian breweries that don't produce 24 ounce beers, and 3 of which are the beers from the inner_join in part b).
+
+#PART 3: Filtering joins in the dplyr package
+
+Simply put, "filtering joins" use information from one data set to extract cases from another data set (kind of like filter(...) does within a data set). 
+
+There are two such join(...) commands to consider:
+
+i) semi_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE")
+   which displays DATA_SET_1 variables/values that have a
+   matching value under "COMMON_VARIABLE" in DATA_SET_2.
+   
+ii) anti_join(DATA_SET_1,DATA_SET_2,by="COMMON_VARIABLE")
+    which displays DATA_SET_1 variables/values that DO NOT
+    have a matching value under "COMMON_VARIABLE" in DATA_SET_2.
+    
+    
+**Exercise 4**
+
+Run the code in the following R chunk and answer the questions in the space provided.
+
+```{r}
+semi_join(BREWCA,BEER24,"BrewID")
+left_join(BREWCA,BEER24,"BrewID")
+anti_join(BEER24,BREWCA,"BrewID")
+```
+
+1) Specific to the BEER24 and BREWCA data sets, what action does the semi_join() command perform when it is run?
+
+   
+
+2) Specific to the BEER24 and BREWCA data sets, what action does the left_join() command perform when it is run?
+
+   
+  
+3) Specific to the BEER24 and BREWCA data sets, what action does the anti_join() command perform when it is run?
+
+   
+
+**Exercise 5**
+
+Use a "filtering join" command (matching by "BrewID") to display a data set that:
+
+a) only includes the 24 ounce beer names from California.
+
+b) only includes the California breweries that don't brew 24 ounce beers.
+
+```{r}
+#Part a)
+
+#Part b)
+
+```
+
+Over the past few weeks you have been introduced to the ggplot(), dplyr(), and tidyr() packages.  That's a lot of tools at your disposal for cleaning up data!  To strengthen your abilities, continue to practice using the commands in these packages by working through the worksheets again during Reading Week.  You'll probably find that you are much quicker the second time through!  (This will obviously help with studying for the midterm test on October 25th too!)
+
+As the next lab isn't until November 1st, please keep an eye on MyLS to see the topics that the next quiz will cover.
+
+Enjoy Reading Week and all the best on the midterm test! 

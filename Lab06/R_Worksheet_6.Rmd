@@ -1,0 +1,320 @@
+---
+title: "R Worksheet 6: The stringr package"
+output:
+  pdf_document: default
+  html_notebook: default
+---
+
+
+The intention of this worksheet is to focus on strings (or characters) and how the stringr package can be used to create and manipulate them. 
+
+As always, be sure to save your work as you progress through this file. To do so, use "File -> Save As" in the toolbar above and save it to the folder that you created for DATA100 in Week 1.  
+
+Once saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your DATA100 folder.
+
+#SETUP
+
+Load the tidyverse (which contains the stringr package that we will be discussing today) and htmlwidgets packages by running the following code,
+
+[Note: If you are using your own laptop and the loading the tidyverse for the first time, you will need to type install.packages("tidyverse") in a line before library(tidyverse).]
+
+```{r}
+library(tidyverse)
+library(htmlwidgets)
+```
+
+#PART 1: The Basics 
+
+First off, the term 'string' in computer programming refers to an ordered sequence of characters (whether it be letters, symbols, numbers), with a first character, a second character, and so on. As with the English language, order and length are important characteristics of a string. In R, and most other programming languages, strings are denoted by single ' ' or double " " quotes. 
+
+The number of functions related to the stringr package are endless (well, not quite - as we are mathematicians this implies infinite - but there are a lot!!!).  Throughout this worksheet, we will look at some of the key functions in the stringr package but do keep in mind that the list below is not all-encompassing. A quick internet search for stringr commands will reveal a more comprehensive list.
+
+Below are some of the basics.  Instead of describing each, an example is provided.
+
+**Example 1**
+
+Defining a string: 
+
+  x<-"Data Science Rules!" would define Data Science Rules! as string x.
+
+**Example 2**
+
+Printing a statement: 
+
+  writeLines(x) would display Data Science Rules! (i.e. string without the quotes - also called the 'escapes'.)
+
+**Example 3**
+
+Defining multiple strings: 
+
+  y<-c("Data Science Rules!","I couldn't agree more.") would define the two strings as a character vector y.
+
+Note: There are many special characters that need special consideration.  For example, to insert quotes in a string you need to put a \ (backslash) before each " in the string.  Further special characters will be introduced as needed.
+
+**Exercise 1**
+
+Try displaying the following statement by first defining the conversation as a character vector y and then using the writeLines(...) command.
+
+  
+  ME: "Data Science Rules!"
+  
+  
+  YOU: "I couldn't agree more."
+
+
+Your output should appear exactly as the conversation does above.
+
+[Note: If you want double spacing (or a new line) as above, this is another example of a special character. Insert "\n" as the second string in the vector and then "YOU:..." as the third string.]
+
+```{r}
+
+```
+
+#PART 2: String Lengths 
+
+Below are some examples of commands associated with string lengths. For each, a brief description is provided along with a general form of the associated command (Note: You would substitute appropriately for any CAPITAL letters.)
+
+**Example 4**
+
+Display the number of characters in a string:
+
+  str_length(STRING)  
+
+**Example 5**
+
+Force all strings to be of a minimum length:
+
+  str_pad(STRING,width=NUMBER_OF_CHARACTERS,side="right"_OR_"left"_OR_"both")   
+
+**Example 6**
+
+Truncate a string with ... at the beginning (left) or end (right):
+
+  str_trunc(STRING,width=NUMBER_OF_CHARACTERS,side="right"_OR_"left")
+    
+**Example 7**
+
+Delete 'whitespace' in the string at beginning, end, or both:
+
+  str_trim(STRING,side="right"_OR_"left"_OR_"both")
+    
+**Exercise 2**
+
+a) Display the number of characters in each string within the character vector y (defined in Exercise 1).
+
+b) Truncate each string in y with a width of 20 and the ... on the right.  Embed the command within the writeLines(...) command to display conversation without the 'escapes'.
+
+```{r}
+
+```
+
+#PART 3: Combining Strings** 
+
+Below are some examples of commands associated with combining strings in R. As was done above, a brief description is provided along with a general form of the associated command (Again, you would substitute appropriately for any CAPITAL letters.)
+
+**Example 8**
+
+Combine two or more strings into one string (separated by indicated symbol):
+
+  str_c("STRING_1",...,"STRING_n",sep="SYMBOL")
+    
+**Example 9**
+
+Combine character vector into one string (separated by indicated symbol):
+
+  str_c(c("STRING_1",...,"STRING_n"),collapse="SYMBOL")
+    
+**Example 10**
+
+Duplicate a string:
+
+  str_dup("STRING",times=NUMBER_OF_DUPLICATES)
+
+**Exercise 3**
+
+a) Use str_c(...) to define the strings "GO", "HAWKS", "GO!\n" as a single string (each separated by a space).  Call it x.
+
+b) Have R display the single string in part a) 4 times.  Embed the command within the writeLines(...) command to display the strings without the 'escapes'.
+    
+```{r}
+
+```
+
+For PARTS 4 to 6, as has been done in PARTS 1 to 3, brief descriptions are provided along with a general form of the associated command(s).
+
+#PART 4: Finding Patterns in Strings
+
+**Example 11**
+
+Highlight where a described pattern appears in a string for the first time:
+
+  str_view("STRING","PATTERN")
+    
+Note: Use str_view_all(...) to have R highlight each time it appears.
+    
+**Example 12**
+
+Display whether a pattern exists (i.e. True or False):
+
+  str_detect("STRING","PATTERN")  
+    
+**Example 13**
+
+Count the number of times a pattern appears in a string:
+
+  str_count("STRING","PATTERN")
+
+
+Additional hints, for "PATTERN" in the commands above:
+  
+  "ab" would look for ab in a string
+  
+  ".a." would look for the character before an 'a', the 'a' itself, and the character after an 'a'
+  
+  "^a" would look for when a string starts with an 'a'
+  
+  "a$" would look for when a string ends with an 'a'
+    
+**Exercise 4**
+
+a) Have R count the number of times "GO" appears in character vector x from Exercise 3 (defined above).
+
+b) Have R highlight every vowel in character vector y from Exercise 1 (defined above).  Note that R is case sensitive.
+
+  [Hint: Use "[LIST_VOWELS]" (without any separation) within the "PATTERN" component of the command.]
+
+```{r}
+
+```
+
+#PART 5: Subsets of Strings
+
+**Example 14**
+
+Extract/Display substring from Mth character to Nth character in a string:
+
+  str_sub("STRING",start=M,end=N)
+    
+  Note: If M=-k and end=-1, str_sub(...) would display the substring from kth last character to the end of string.
+  
+**Example 15**
+
+Displays strings of a character vector that have a pattern match:
+
+  str_subset("STRING","PATTERN")
+    
+**Example 16**
+
+Display the first time a pattern is found in a string:
+    
+  str_extract("STRING","PATTERN")
+    
+[Note: Use str_extract_all(...) to have R display each time that pattern appears.]
+    
+Also, str_match(...) and str_match_all(...) are similar to above commands except that they displays result in a column matrix form.
+
+**Exercise 5**
+
+a) Display the GO! substring in character vector x using positive values for M and N and then negative values for M and N. Embed the command within the writeLines(...) command to display the strings without the 'escapes'.
+
+b) Display every time an 'a' followed by any other character appears in character vector y.
+
+```{r}
+
+```
+
+#PART 6: Modifying Strings
+
+**Example 17**
+
+Replace the first time a pattern is found with a string:
+
+  str_replace("STRING","PATTERN","REPLACEMENT")
+    
+Note: str_replace_all will replace every time pattern appears.
+  
+**Example 18**
+
+Convert strings to lower or upper case:
+
+  str_to_lower(STRING,locale="en") and str_to_upper(STRING,locale="en")
+    
+Note: The "en" indicates English as each language can be different when discussing upper/lower case.
+  
+**Example 19**
+
+Sort a character vector alphabetically (via first character then, if necessary, second character and so):
+
+  str_sort(STRING,local="en")
+    
+**Exercise 6**
+
+a) For extra enthusiasm, replace each time "GO" appears in character vector x with "GOOOO".
+
+b) Then, to lessen the ethusiasm, use a pipe to display the new character vector in lower case.
+
+c) Finally, use writeLines() to display the string without the 'escapes'.
+
+[Hint: Use piping to go from parts a) to b) to c).]
+
+```{r}
+
+```
+
+So far, everything that we have completed in this worksheet references manually defined vectors, etc.  Before we finish today's worksheet, let's complete one last exercise that looks at using the str_sub(...) command (Part 5 above) on a tibble.
+
+**Exercise 7**
+
+Recall the BabyNames.csv data set from Lab Session 2 which is an archive of baby names in the US from 1880 to 2014.
+
+Import the data set in the space below using the read_csv(...) command and call it BN (for baby names).
+
+```{r}
+
+```
+
+Now, ask yourself this question:
+
+"EACH YEAR, DO MORE GIRLS OR BOYS HAVE NAMES THAT END IN A VOWEL?" 
+
+What do you think the answer is? (I had no idea, honestly).  Let's try to find out by completing the following:
+
+a) Use the mutate(...) command to create a new variable called "Last.Letter" that displays the last letter of each name in the data set.  Call the new data set BN2 and display it once created.
+  
+  [Hint: Use str_sub(...) within the mutate command to display the last letters.]
+  
+```{r}
+
+```
+  
+b) Use the filter(...) command on BN2 so that the data set contain all of the observations only includes "Last.Letter"'s that are a vowel (i.e. a, e, i, o, u, y).  Call the new data set BN3 and display it once created.
+
+  [Recall: For strings/characters, you must use filter(DATA_SET,VARIABLE %in% c("STRING_1",...,"STRING_2")).]
+  
+```{r}
+
+```
+  
+  
+c) Use the group_by(...), a pipe %>%, and the summarise(...) commands on BN3 to create a data set whose variables are the "total" number of names that end in a vowel each "Year" for each "Gender".  Call it BN4 and display it once created.
+
+```{r}
+
+```
+
+
+d) Use the ggplot(...)+geom_line(...) command to create a line plot of "Year" vs "total" where "Gender" is denoted by color.
+
+```{r}
+
+```
+
+Take your time on the last exercise and don't give up! It involves commands from ggplot, dplyr, and stringr and the results are quite interesting!  
+
+Once the exercise above is completed, that concludes this week's worksheet on strings and the stringr package. Do keep in mind that there are many more commands associated with strings in R and that this worksheet is only intended to introduce you to some of the more common commands.
+
+A reminder that next week's lab will have two components:
+
+  1) During the first 30 minutes you will be a completing an open book quiz in R on the content discussed in this file (so be sure to practice!).  
+  
+  2) The final 50 minutes we will practice using code related to concepts discussed in your most recent lectures (which you will then be quizzed on in the first 30 minutes of the following lab).  Check MyLS to see what content will be covered.

@@ -1,0 +1,426 @@
+---
+title: 'R Worksheet 2: The dplyr package (transforming data)'
+output:
+  html_notebook: default
+  pdf_document: default
+---
+
+The intention of this worksheet is to introduce you to some of the commands in the dplyr package in R (which we will continue to look at next week) and further familiarize you with the ggplot2 package from last week.
+
+As always, be sure to save your work as you progress through this file! To do so, use "File -> Save As" in the toolbar above and save it to the DATA100 folder that you created in Week 1.  
+
+Once saved, go to "Session -> Set Working Directory -> Choose Directory..." in the toolbar at the top of this page and navigate to your DATA100 folder. You will want to do this each time you open a DATA100 file in RStudio.
+
+Additional Reminders:
+
+i) Any of the "white" areas in this file (called an R notebook or markdown file) are where text can be input into the document.
+
+ii) Any of the "grey" areas are where R code is entered (called "code chunks").  To execute any of the code chunks, push the run button (looks like a "play" button) in the top right of the code chunk. Alternatively, "Ctrl+Shift+Enter" will also run the code chunk.
+
+iii) Code chunks will always start with '''{r} and end with '''.  If necessary, to insert a code chunk you can click on "Insert" along the tool bar and choose R or "Ctrl+Alt+I".  For the most part, code chunks will be given and you won't need to insert them in the file yourself.
+
+#SETUP
+
+As mentioned Week 1, there will be a major focus in this course on the tidyverse package within R that was designed for use in Data Science.  From the creators themselves, "the tidyverse is an opinionated collection of R packages designed for data science. All packages share an underlying design philosophy, grammar, and data structures.".
+
+To load the tidyverse package (which contains the dplyr package we will be discussing today), run the following code:
+
+[Note: If you are using your own laptop and the loading the tidyverse for the first time, you will need to type install.packages("tidyverse") in a line before library(tidyverse).]
+
+```{r}
+library(tidyverse)
+```
+
+Also, import the following data sets into R (see Part 3 of R Worksheet 1 for assistance):
+
+1) The GooglePlayStore.csv (found on MyLS, save it to your DATA100 folder before trying to import) which gives information on over 10,000 apps available in the Google Play Store.  Name the data set GPS. 
+
+2) The BabyNames.csv (also found on MyLS) which is an archive of baby names in the US from 1880 to 2014 (it's a large file!).  Name the data set BN.
+
+[Reminder: After importing, to view either data set just type their NAME (e.g. GPS) or use View(NAME) (e.g. View(GPS)). Notice that GPS has 10840 rows (which are the apps) and 13 columns/variables - click the black play buttons along the top row where the variables are listed to cycle through the 13 columns.  You may not need to do this for BN as it only has 5 columns/variables but 1,825,433 rows for the names!]
+
+```{r}
+GPS<-read_csv("GooglePlayStore.csv")
+BN<-read_csv("BabyNames.csv")
+
+```
+
+#PART 1 - FILTER(...) IN DPLYR 
+
+The filter() command in the dplyr package allows for the filtering of observations based on their results.  The first component in the command is the data set to be filtered followed by the arguments that the data set is to be filtered by.
+
+**Example 1**
+
+In the space provided below, enter filter(GPS,Installs=="50,000,000+") and analyze the outcome.
+
+```{r}
+filter(GPS,Installs == "50,000,000 + ")
+
+```
+
+Clearly, '==' refers to components equal to some data value/character.  There are other operators to consider in R, like:
+
+  equal                       ==
+  greater than                >
+  less than                   <
+  greater than or equal to    >=
+  less than or equal to       <=
+  not equal to                !=
+  
+There are also the following logical operators:
+
+  and                                   &
+  or (in one or both)                   |
+  exclusive or (in one but not both)    xor(...)
+  not                                   !
+  member of a group                     %in%
+  
+
+**Example 2**
+
+Enter the following in the spaces below and analyze the results.
+
+[Recall: Clicking the black arrows along the column names will scroll through the columns in the data set.]
+
+i) filter(GPS,Rating>=4.9)
+  
+```{r}
+filter(GPS,Rating >=4.9)
+
+```
+  
+ii) filter(GPS,Installs=="50,000,000+" & Rating<3.7)
+  
+```{r}
+ filter(GPS,Installs=="50,000,000+" & Rating<3.7)
+```
+  
+iii) filter(GPS,xor(Installs=="50,000,000+", Rating<3.7))
+
+```{r}
+filter(GPS,xor(Installs=="50,000,000+", Rating<3.7))
+```
+  iv) filter(GPS,(Installs=="50,000,000+" & Rating<3.7) |(Installs=="5,000+" & Rating==5) )
+  
+```{r}
+filter(GPS,(Installs=="50,000,000+" & Rating<3.7) |(Installs=="5,000+" & Rating==5) )
+```
+
+**Exercise 1**
+
+Now, let's look at the BabyNames.csv data set (which you named BN above) to practice using the filter() command in dplyr.
+
+Complete the following tasks:
+
+i) Filter the BN data set to list all of the years that your name appears.  You may choose an "alter ego" if your name does not appear.
+
+[Note: When finding numeric results you can just state its value (for example, 3.7 in the examples above), but for a character, or string, you must enclose it in "" (for example, "50,000,000+" from above).]
+
+```{r}
+
+filter(BN,Name == "Nish")
+
+
+```
+
+ii) Filter the data set to list your name during the year you were born.
+
+```{r}
+filter(BN,Year == "2001" & Name == "Nish")
+
+```
+
+iii) Filter the BN data set to list all of the years that the name "Snow" appears.  Try it again for "Khaleesi".  Interesting results?  [If you didn't watch "Game of Thrones" the results won't mean much to you :).]
+
+```{r}
+filter(BN, Name == "Snow")
+filter(BN, Name == "Khaleesi")
+
+```
+
+
+iv) Filter the data set to list your name only when it appears less than 10 times in a year or more than 100 times in a year.
+
+```{r}
+filter(BN, Name == "Nish" & (Count < 10 | Count > 100))
+```
+
+v) Define a new data set called MYNAME that only includes the rows of the BN data set where your name appears.  Once defined, use ggplot() and geom_point to plot the year vs. the number of times your name appears, colouring the points by the Gender variable. 
+
+```{r}
+MYNAME<-filter(BN,Name =="Nish")
+MYNAME
+
+```
+
+#PART 2 - ARRANGE(...) IN DPLYR
+
+The arrange() command in the dplyr package allows for the re-ordering of observations based on their results.  The first component in the command is the data set to be re-ordered followed by the variable(s) that the data set is to be re-ordered by.
+
+**Example 3**
+
+Enter arrange(GPS,Rating) and analyze the outcome.
+
+```{r}
+arrange(GPS,Rating)
+```
+
+The results can also be listed in descending order using the desc(...) command.  For example, enter arrange(GPS,desc(Rating)) and analyze the results.
+
+```{r}
+arrange(GPS,desc(Rating))
+```
+
+What if you have multiple observations with the same value (for example, Rating above)? A "tie-breaker" can be used.  Try entering arrange(GPS,desc(Rating),desc(Reviews)) and anaylze the result.
+
+```{r}
+arrange(GPS,desc(Rating),desc(Reviews))
+
+```
+
+**Exercise 2**
+
+Practice using the arrange() command on the BN data set by completing the following: 
+
+i) Sort the BN data set by "Count" in descending order. 
+
+[Look at the result.  You should easily be able to determine the year with the most used name and the name itself.] 
+
+```{r}
+arrange(BN,desc(Count))
+```
+
+ii) Sort the BN data by name (will sort automatically in alphabetical order), then by the number of times it is used (largest to smallest), and finally the gender (in alpha order). 
+
+```{r}
+arrange(BN,Name,desc(Count),Gender)
+```
+#PART 3 - PIPING
+
+It is now time to introduce another operate called the 'pipe' operator.  It is denoted by %>% and can be thought of as 'then' in a logical statement.
+
+**Example 4**
+
+To filter the GPS data so that it displays the Apps with over 50 million installations and then sorts them in descending order by their ratings try entering:
+
+GPS %>%
+filter(Installs=="50,000,000+") %>%
+arrange(desc(Rating))
+
+```{r}
+GPS %>%
+filter(Installs=="50,000,000+") %>%
+arrange(desc(Rating))
+```
+
+**Exercise 3**
+
+Try using the pipe operator to filter the names data set so that it only involves your name and then orders it with the year it appears most as the first entry.
+
+```{r}
+BN %>%
+filter(Name=="Nish") %>%
+arrange(desc(Count))
+
+```
+
+NOTE: Piping should be used whenever you want to incorporate multiple commands from the dplyr package in R.  For the remainder of this worksheet use %>% whenever possible.
+
+#PART 4 - SELECT(...) IN DPLYR
+
+The select() command in the dplyr package allows for the extraction of columns from a data set (so, kind of like filter() but for columns).  The first component in the command is the data set to be re-ordered followed by the column(s) to be displayed.
+
+**Example 5**
+
+In the space below, enter select(GPS,Rating,Reviews) and analyze the outcome.
+
+```{r}
+select(GPS,Rating,Reviews)
+
+```
+
+There are many additional features by which columns/variables can be selected.  Some examples are (substituting appropriately for the capitalizations):
+
+VARIABLE_NAME_1:VARIABLE_NAME_2                         displays variables from first referenced to last
+-c(VARIABLE_NAME_1,VARIABLE_NAME_2)                     displays all variables except those listed
+starts_with("CHARACTER")                                displays variables starting with character
+ends_with("CHARACTER")                                  displays variables ending with character
+contains("SOME_VALUE_OR_CHARACTER_IN_VARIABLE")         displays variables with character referenced
+one_of(c("VARIABLE_NAME_1",...,"VARIABLE_NAME_n"))      displays variables in set
+
+**Example 6**
+
+Enter select(GPS,starts_with("R")) and notice the similarity to the results above.
+
+```{r}
+select(GPS,starts_with("R"))
+```
+**Exercise 4**
+
+Practice using the select() command (and previously discussed commands along with piping) on the BN data set by completing the following:
+
+i) Display just the names, the years, and the number of times the names appear.
+
+```{r}
+select(BN,Name,Year,Count)
+```
+ii) Redo part i) using the -c(...) feature. 
+
+```{r}
+select(BN,-c(Id,Gender))
+```
+
+iii) Filter the names data set so that it only includes your name sorted by the count (in descending order) and excludes the ID column in the results (use the piping operator).
+
+```{r}
+BN %>%
+filter(Name=="Nish") %>%
+arrange(desc(Count)) %>%
+select(-c("Id"))  
+```
+
+#PART 5 - mutate(...) IN DPLYR
+
+The mutate() command in the dplyr package allows for the creation of new columns/variables using values from a data set.  The first component in the command is the name of the data set which is then followed by the definition of the new column/variable.
+
+**Example 7**
+
+In the space below, enter mutate(GPS,Rounded.Rating=round(Rating)) and analyze the outcome.
+
+[Recall: Click the black right arrow to scroll through the columns - the new one will be at the end.]
+
+```{r}
+mutate(GPS,Rounded.Rating=round(Rating))
+```
+
+If only the new variable is to be displayed try entering transmute(GPS,Rounded.Rating=round(Rating)) and analyze the outcome.
+
+```{r}
+ transmute(GPS,Rounded.Rating=round(Rating))
+```
+
+And, if you wanted to include the App name (for example) with the new variable you would have to use the mutate() command, a pipe, and then the select command as follows:
+
+```{r}
+GPS %>%
+  mutate(Rounded.Rating=round(Rating)) %>%
+  select(App,Rounded.Rating)
+```
+
+Note that the commands we used in Example 7 did not permanently alter the original GPS data set.  If you wanted, for example, the Rounded.Rating variable to permanently become a part of GPS you would start with GPS<-GPS %>% and so on. My suggestion, however, would be to not alter the original data set but to create a new data set.  For example, if you wanted the Rounded.Rating variable to be permanent, I would have called the new data set something like GPS2<-....
+
+**Exercise 5**
+
+Practice using the mutate() command (and previously discussed commands along with piping) on the BN data set by completing the following (note: you do not need to permanently define these new variables): 
+
+i) Add a column/variable called percent that uses the "Count" variable to calculate the percentage of the entire data that a name is used (treat each name that appears multiple times as a unique result by year and gender).
+
+[Hint: Use sum(Count) in the denominator.]
+
+```{r}
+GPS %>%
+ mutate(Rounded.Rating=round(Rating)) %>%
+ select(App,Rounded.Rating)
+```
+
+Notice that the values are quite small.  For example, Mary in 1880 is ~0.002% of the entire data set (recall: e-03 is the same as 10^(-3)).  
+
+ii) First filter BN so that it only includes your name and then add a column/variable called percent that uses the "Count" variable to calculate, for each year your name is used, the percentage of the total number of times your name is used.  Sort the results by percent in descending order.
+
+```{r}
+mutate(BN,percent=100*Count/sum(Count))
+```
+
+
+**PART 6 - summarise(...) and group_by() IN DPLYR**
+
+The summarise() command in the dplyr package is used to display summary statistics of variables from a data set.  The first component in the command is the data set to be followed by the statistics to be displayed.
+
+**Example 8**
+
+In the space below, enter summarise(GPS,total.reviews=sum(Reviews,na.rm=TRUE),avg.rating=mean(Rating,na.rm=TRUE)) and analyze the outcome.
+
+[Note: Recall that na.rm=TRUE is telling R to ignore the invalid entries for each variable (stands for NA remove).]
+
+```{r}
+summarise(GPS,total.reviews=sum(Reviews,na.rm=TRUE),avg.rating=mean(Rating,na.rm=TRUE))
+```
+
+At this point it is useful to introduce the group_by() command.  It, along with summarise, can be used to dive deeper into the statistics by allowing you to group variables that have common entries. 
+
+**Example 9**
+
+Suppose that we wanted to find the total number of reviews and the average rating for each content rating (18+, Everyone, Teen, etc.) in the GPS data set. This where grouping comes in handy. Try entering the following and analyze the result.
+
+GPS %>%
+  group_by(Content_Rating) %>%
+  summarise(total.reviews=sum(Reviews,na.rm=TRUE),avg.rating=mean(Rating,na.rm=TRUE))
+
+```{r}
+GPS %>%
+  group_by(Content_Rating) %>%
+  summarise(total.reviews=sum(Reviews,na.rm=TRUE),avg.rating=mean(Rating,na.rm=TRUE))
+
+```
+
+**Exercise 6**
+
+Practice using the summarise() and group_by() commands (and previously discussed commands along with piping) on the BN data set by completing the following.
+
+i) Grouping the data by gender, find the total number of females and males in the data set.
+
+```{r}
+BN %>%
+ group_by(Gender) %>%
+ summarise(total=sum(Count))
+```
+
+ii) Use group_by(...), summarise(...), and arrange(...) along with piping to list the most common names (by "Count") in descending order.
+
+```{r}
+BN %>%
+ group_by(Name) %>%
+ summarise(total=sum(Count)) %>%
+ arrange(desc(total))
+```
+
+iii) Redo part ii) using only those names from the year 2000 onwards. [Hint: filter()]
+
+```{r}
+BN %>%
+ filter(Year>=2000) %>%
+ group_by(Name) %>%
+ summarise(total=sum(Count)) %>%
+ arrange(desc(total))
+```
+
+iv) Use mutate(...), group_by(...), summarise(...), and then arrange(...) to find the percentage of times each name appears in the list (by "Count") in descending order.
+
+```{r}
+BN %>%
+ mutate(percent=100*Count/sum(Count)) %>%
+ group_by(Name) %>%
+ summarise(percent=sum(percent)) %>%
+ arrange(desc(percent))
+```
+
+v) Find the number of children born in each year and plot the resulting data set as a series of line segments joining the points (year [x-axis] vs the number of children born [y-axis]).
+
+[Note: If using piping, there is no need to put anything in the brackets for ggplot()+... since it's within the pipe!]
+
+```{r}
+BN %>%
+ group_by(Year) %>%
+ summarise(total=sum(Count)) %>%
+ ggplot()+geom_line(aes(Year,total))
+```
+
+That finishes this week's introduction to the dplyr package in R - in my opinion, one of the most useful packages for manipulating and transforming data sets. In summary, the six main commands to remember are filter(), arrange(), select(), mutate(), summarise(), and group_by() - along with the idea of piping.  In data science, the ability to "clean data" is essential and using this package can help you be successful in that task. 
+
+A reminder that next week's lab will have two components:
+
+  1) During the first 30 minutes you will be a completing an open book quiz in R on the content discussed in this file (so be sure to practice!).  
+  
+  2) The final 50 minutes we will practice using code related to concepts discussed in your most recent lectures (which you will then be quizzed on in the first 30 minutes of the following lab).  Check MyLS to see what content will be covered.
+  
+Enjoy the weekend!
